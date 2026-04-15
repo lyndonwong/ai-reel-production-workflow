@@ -3,386 +3,701 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Reel Production Workflow</title>
+<title>AI Reel Production Workflow — Lyndon Wong</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background: #f5f4f0;
-    color: #1a1a1a;
-    padding: 32px 16px 64px;
-    min-height: 100vh;
-  }
-  .container { max-width: 680px; margin: 0 auto; }
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  .masthead {
-    background: #0a0a0a;
-    border-radius: 12px;
-    padding: 28px 28px 22px;
-    margin-bottom: 28px;
-    position: relative;
-    overflow: hidden;
-  }
-  .masthead::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #B31C1C 0%, #e05555 50%, #B31C1C 100%);
-  }
-  .masthead-eyebrow {
-    font-size: 10px; font-weight: 600;
-    letter-spacing: 0.16em; text-transform: uppercase;
-    color: #B31C1C; margin-bottom: 8px;
-  }
-  .masthead-title {
-    font-size: 26px; font-weight: 800;
-    color: #fff; line-height: 1.1; margin-bottom: 6px;
-  }
-  .masthead-sub { font-size: 13px; color: #888; margin-bottom: 18px; }
+/* ── Minimal Mistakes color tokens ── */
+:root {
+  --mm-bg:        #fff;
+  --mm-text:      #3d4144;
+  --mm-muted:     #6f777d;
+  --mm-border:    #f2f3f3;
+  --mm-border-dk: #d8d8d8;
+  --mm-masthead:  #343434;
+  --mm-link:      #18a8e7;
+  --mm-accent:    #18a8e7;
+  --mm-sidebar-w: 220px;
+  --mm-content-max: 800px;
+  --mm-complete:  #3fa63f;
+}
 
-  .change-banner {
-    background: #1a1a1a;
-    border: 0.5px solid #333;
-    border-radius: 6px;
-    padding: 10px 14px;
-    margin-bottom: 18px;
-    font-size: 11px; color: #aaa; line-height: 1.6;
-  }
-  .change-banner strong { color: #B31C1C; }
+/* ── Base ── */
+body {
+  font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  background: var(--mm-bg);
+  color: var(--mm-text);
+  -webkit-font-smoothing: antialiased;
+}
 
-  .prog-track {
-    background: #222; border-radius: 20px;
-    height: 5px; overflow: hidden; margin-bottom: 5px;
-  }
-  .prog-fill {
-    height: 100%; background: #B31C1C;
-    border-radius: 20px; width: 0%;
-    transition: width 0.3s ease;
-  }
-  .prog-label { font-size: 11px; color: #666; text-align: right; }
+a { color: var(--mm-link); text-decoration: none; }
+a:hover { text-decoration: underline; }
 
-  .phase { margin-bottom: 20px; }
-  .phase-head {
-    display: flex; align-items: center; gap: 10px;
-    padding: 11px 15px;
-    background: #fff;
-    border-radius: 8px;
-    border: 0.5px solid #ddd;
-    margin-bottom: 10px;
-  }
-  .phase-badge {
-    width: 24px; height: 24px; border-radius: 50%;
-    background: #B31C1C; color: #fff;
-    font-size: 11px; font-weight: 600;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; transition: background 0.2s;
-  }
-  .phase-badge.complete { background: #2d8a52; }
-  .phase-title { font-size: 13px; font-weight: 600; color: #1a1a1a; flex: 1; }
+/* ── Masthead (top nav bar) ── */
+.mm-masthead {
+  background: var(--mm-masthead);
+  height: 80px;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 4px solid var(--mm-accent);
+}
+.mm-masthead__title {
+  color: #fff;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.mm-masthead__logo {
+  width: 80px;
+  height: 80px;
+  margin-right: 0;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mm-masthead__logo img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  display: block;
+}
+.mm-masthead__spacer { flex: 1; }
+.mm-masthead__nav {
+  display: flex;
+  gap: 18px;
+  list-style: none;
+}
+.mm-masthead__nav a {
+  color: #c8c8c8;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: color 0.15s;
+}
+.mm-masthead__nav a:hover {
+  color: #fff;
+  text-decoration: none;
+}
 
-  .tool-pill {
-    font-size: 10px; font-weight: 600;
-    padding: 2px 8px; border-radius: 20px;
-    text-transform: uppercase; letter-spacing: 0.07em;
-    white-space: nowrap; flex-shrink: 0;
-  }
-  .tg { border: 0.5px solid rgba(66,133,244,0.4); color: #4285F4; background: rgba(66,133,244,0.07); }
-  .td { border: 0.5px solid rgba(102,51,153,0.4); color: #663399; background: rgba(102,51,153,0.07); }
-  .ty { border: 0.5px solid rgba(45,138,82,0.4); color: #2d8a52; background: rgba(45,138,82,0.07); }
+/* ── Page layout ── */
+.mm-page {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 32px 20px 60px;
+  display: flex;
+  gap: 36px;
+  align-items: flex-start;
+}
 
-  .steps { padding-left: 2px; }
-  .step { display: flex; gap: 12px; margin-bottom: 10px; align-items: flex-start; }
-  .chk {
-    width: 19px; height: 19px;
-    border: 1.5px solid #ccc;
-    border-radius: 4px; flex-shrink: 0; margin-top: 1px;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: background 0.12s, border-color 0.12s;
-    background: #fff;
-  }
-  .chk:hover { border-color: #B31C1C; }
-  .chk.done { background: #B31C1C; border-color: #B31C1C; }
-  .chk.done::after {
-    content: '';
-    width: 10px; height: 6px;
-    border-left: 2px solid #fff;
-    border-bottom: 2px solid #fff;
-    transform: rotate(-45deg) translateY(-1px);
-    display: block;
-  }
-  .step-body { flex: 1; }
-  .step-label {
-    font-size: 13px; font-weight: 600;
-    color: #1a1a1a; margin-bottom: 3px; line-height: 1.4;
-  }
-  .step-detail { font-size: 12px; color: #555; line-height: 1.65; }
-  .step-detail code {
-    font-family: "SF Mono", "Fira Code", monospace; font-size: 11px;
-    background: #f0eeeb; border: 0.5px solid #ddd;
-    border-radius: 3px; padding: 1px 5px; color: #1a1a1a;
-  }
+/* ── Sidebar (author profile) ── */
+.mm-sidebar {
+  width: var(--mm-sidebar-w);
+  flex-shrink: 0;
+  position: sticky;
+  top: 100px; /* masthead + padding */
+}
+.author-avatar {
+  display: block;
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 12px;
+  border: 2px solid var(--mm-border-dk);
+}
+.author-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.author-name {
+  font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--mm-text);
+  text-align: center;
+  margin-bottom: 4px;
+}
+.author-bio {
+  font-size: 13px;
+  color: var(--mm-muted);
+  text-align: center;
+  line-height: 1.55;
+  margin-bottom: 14px;
+}
+.author-links {
+  list-style: none;
+  border-top: 1px solid var(--mm-border-dk);
+  padding-top: 12px;
+}
+.author-links li {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: var(--mm-muted);
+  padding: 4px 0;
+}
+.author-links li a { color: var(--mm-muted); }
+.author-links li a:hover { color: var(--mm-link); }
+.link-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  opacity: 0.65;
+}
 
-  .tip {
-    background: #fdf6f6;
-    border-left: 3px solid #B31C1C;
-    border-radius: 6px;
-    padding: 9px 13px;
-    font-size: 12px; color: #555;
-    line-height: 1.6; margin-top: 7px;
-  }
-  .tip strong { color: #1a1a1a; font-weight: 600; }
+/* ── Main content ── */
+.mm-main {
+  flex: 1;
+  min-width: 0;
+  max-width: var(--mm-content-max);
+}
 
-  .single-block-badge {
-    display: inline-block;
-    font-size: 10px; font-weight: 700;
-    padding: 3px 9px; border-radius: 20px;
-    background: #B31C1C; color: #fff;
-    text-transform: uppercase; letter-spacing: 0.08em;
-    margin-left: 6px; vertical-align: middle;
-  }
+/* ── Page title area ── */
+.page-hero {
+  border-bottom: 1px solid var(--mm-border-dk);
+  padding-bottom: 18px;
+  margin-bottom: 24px;
+}
+.page-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--mm-muted);
+  margin-bottom: 6px;
+}
+.page-title {
+  font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.15;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+}
+.page-sub {
+  font-size: 14px;
+  color: var(--mm-muted);
+  line-height: 1.5;
+}
 
-  .divider { border: none; border-top: 0.5px solid #ddd; margin: 18px 0; }
+/* ── Changelog notice ── */
+.changelog {
+  background: #fafafa;
+  border: 1px solid var(--mm-border-dk);
+  border-left: 4px solid var(--mm-accent);
+  border-radius: 3px;
+  padding: 11px 14px;
+  font-size: 13px;
+  color: var(--mm-muted);
+  line-height: 1.6;
+  margin-bottom: 22px;
+}
+.changelog strong { color: var(--mm-text); font-weight: 600; }
 
-  .reset-btn {
-    display: block; margin: 28px auto 0;
-    padding: 9px 24px; border-radius: 6px;
-    border: 1.5px solid #B31C1C;
-    background: transparent; color: #B31C1C;
-    font-size: 12px; font-weight: 600;
-    letter-spacing: 0.06em; text-transform: uppercase;
-    cursor: pointer; transition: background 0.15s, color 0.15s;
-  }
-  .reset-btn:hover { background: #B31C1C; color: #fff; }
+/* ── Progress ── */
+.progress-wrap { margin-bottom: 28px; }
+.progress-bar-track {
+  background: #eee;
+  border-radius: 10px;
+  height: 6px;
+  overflow: hidden;
+  margin-bottom: 5px;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: var(--mm-accent);
+  border-radius: 10px;
+  width: 0%;
+  transition: width 0.3s ease;
+}
+.progress-label {
+  font-size: 12px;
+  color: var(--mm-muted);
+  text-align: right;
+}
+
+/* ── Phase ── */
+.phase { margin-bottom: 28px; }
+
+.phase-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: #f6f6f6;
+  border: 1px solid var(--mm-border-dk);
+  border-radius: 4px;
+  margin-bottom: 14px;
+}
+.phase-badge {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #18a8e7;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+.phase-badge.complete { background: var(--mm-complete); }
+.phase-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--mm-text);
+  flex: 1;
+}
+
+/* Tool pills — styled like MM taxonomy pills */
+.tool-pill {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 9px;
+  border-radius: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.tg { background: #e8f0fe; color: #1a73e8; }
+.td { background: #f0e8fe; color: #7b2fbe; }
+.ty { background: #e8f5e9; color: #2e7d32; }
+
+.one-paste-badge {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 2px;
+  background: var(--mm-accent);
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+/* ── Steps ── */
+.steps { padding-left: 4px; }
+.step {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 14px;
+  align-items: flex-start;
+}
+
+/* Checkbox — matching MM's clean, simple style */
+.chk {
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid #bbb;
+  border-radius: 3px;
+  flex-shrink: 0;
+  margin-top: 3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s, border-color 0.12s;
+  background: #fff;
+}
+.chk:hover { border-color: var(--mm-accent); }
+.chk.done { background: var(--mm-accent); border-color: var(--mm-accent); }
+.chk.done::after {
+  content: '';
+  width: 9px; height: 5px;
+  border-left: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  transform: rotate(-45deg) translateY(-1px);
+  display: block;
+}
+
+.step-body { flex: 1; }
+.step-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--mm-text);
+  margin-bottom: 3px;
+  line-height: 1.4;
+}
+.step-detail {
+  font-size: 13px;
+  color: var(--mm-muted);
+  line-height: 1.65;
+}
+.step-detail code {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 12px;
+  background: #f3f3f3;
+  border: 1px solid var(--mm-border-dk);
+  border-radius: 3px;
+  padding: 1px 5px;
+  color: var(--mm-text);
+}
+
+/* Notice / tip — MM "notice--info" style */
+.tip {
+  background: #e8f5fa;
+  border-left: 4px solid var(--mm-accent);
+  border-radius: 3px;
+  padding: 9px 13px;
+  font-size: 13px;
+  color: #2c5f72;
+  line-height: 1.6;
+  margin-top: 9px;
+}
+.tip strong { color: #1a4455; font-weight: 700; }
+
+/* ── Section divider ── */
+.mm-divider {
+  border: none;
+  border-top: 1px solid var(--mm-border-dk);
+  margin: 24px 0;
+}
+
+/* ── Reset button — MM button style ── */
+.mm-btn {
+  display: inline-block;
+  padding: 8px 20px;
+  border: 1px solid var(--mm-border-dk);
+  border-radius: 4px;
+  background: #fff;
+  color: var(--mm-muted);
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  margin-top: 24px;
+}
+.mm-btn:hover {
+  background: var(--mm-accent);
+  border-color: var(--mm-accent);
+  color: #fff;
+}
+
+/* ── Footer ── */
+.mm-footer {
+  background: var(--mm-masthead);
+  color: #8a8a8a;
+  font-size: 12px;
+  padding: 20px;
+  text-align: center;
+  margin-top: 40px;
+}
+.mm-footer a { color: #8a8a8a; }
+.mm-footer a:hover { color: #fff; }
+
+/* ── Responsive ── */
+@media (max-width: 720px) {
+  .mm-sidebar { display: none; }
+  .mm-masthead__nav { display: none; }
+  .page-title { font-size: 24px; }
+}
 </style>
 </head>
 <body>
-<div class="container">
 
-  <div class="masthead">
-    <div class="masthead-eyebrow">Story Producer v7.6</div>
-    <div class="masthead-title">AI Reel Production Workflow</div>
-    <div class="masthead-sub">Gemini Gem → Descript · 5-scene Instagram Reel · Single instruction block</div>
+<!-- ── Top nav masthead ── -->
+<header class="mm-masthead">
+  <div class="mm-masthead__logo">
+    <img src="https://lyndonwong.com/assets/images/LWA-v2-square.png" alt="el double you ayy">
+  </div>
+  <div class="mm-masthead__spacer"></div>
+  <ul class="mm-masthead__nav">
+    <li><a href="https://lyndonwong.com/">Home</a></li>
+    <li><a href="https://lyndonwong.wordpress.com">Blog</a></li>
+    <li><a href="https://github.com/lyndonwong">GitHub</a></li>
+  </ul>
+</header>
 
-    <div class="change-banner">
+<!-- ── Page body ── -->
+<div class="mm-page">
+
+  <!-- ── Left sidebar (author card) ── -->
+  <aside class="mm-sidebar">
+    <a class="author-avatar" href="https://lyndonwong.com/">
+      <img src="https://lyndonwong.com/assets/images/Lyndon-headshot.jpg" alt="Lyndon Wong">
+    </a>
+    <div class="author-name">Lyndon Wong</div>
+    <p class="author-bio">Growth / Demand marketing practitioner exploring AI across the customer journey.</p>
+    <ul class="author-links">
+      <li>
+        <svg class="link-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5 14.5 7.62 14.5 9 13.38 11.5 12 11.5z"/></svg>
+        Bay Area, CA
+      </li>
+      <li>
+        <svg class="link-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
+        <a href="https://www.linkedin.com/in/lyndonwong/">LinkedIn</a>
+      </li>
+      <li>
+        <svg class="link-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+        <a href="https://github.com/lyndonwong">GitHub</a>
+      </li>
+      <li>
+        <svg class="link-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+        <a href="https://www.instagram.com/lyndonian">Instagram</a>
+      </li>
+      <li>
+        <svg class="link-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.27 8.27 0 0 0 4.84 1.55V6.79a4.85 4.85 0 0 1-1.07-.1z"/></svg>
+        <a href="https://lyndonwong.wordpress.com">Blog</a>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- ── Main content ── -->
+  <main class="mm-main">
+
+    <div class="page-hero">
+      <div class="page-eyebrow">AI Video Production · Story Producer v7.6</div>
+      <h1 class="page-title">AI Reel Production Workflow</h1>
+      <p class="page-sub">Gemini Gem → Descript &nbsp;·&nbsp; 5-scene Instagram Reel &nbsp;·&nbsp; Single instruction block</p>
+    </div>
+
+    <div class="changelog">
       <strong>v7.6 changes:</strong> Block 1 / Block 2 eliminated — single paste into Underlord. Color grade removed. Caption instructions removed (layout-handled). Music specified entirely in single block. Scene count explicitly 5. Fixed ALL CAPS casing behavior.
     </div>
 
-    <div class="prog-track"><div class="prog-fill" id="prog"></div></div>
-    <div class="prog-label"><span id="dn">0</span> of <span id="tot">0</span> steps complete</div>
-  </div>
-
-  <!-- PHASE 1 -->
-  <div class="phase" id="ph1">
-    <div class="phase-head">
-      <div class="phase-badge" id="pb1">1</div>
-      <div class="phase-title">Gemini — upload images + article, get hooks</div>
-      <span class="tool-pill tg">Gem 2</span>
+    <div class="progress-wrap">
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill" id="prog"></div>
+      </div>
+      <div class="progress-label"><span id="dn">0</span> of <span id="tot">0</span> steps complete</div>
     </div>
-    <div class="steps">
 
-      <div class="step">
-        <div class="chk" onclick="tick(this)"></div>
-        <div class="step-body">
-          <div class="step-label">Open Story Producer Gem — start a new chat</div>
-          <div class="step-detail">Start a fresh chat for each story. Do not reuse a previous story session — prior image analysis will interfere.</div>
-        </div>
+    <!-- PHASE 1 -->
+    <div class="phase" id="ph1">
+      <div class="phase-head">
+        <div class="phase-badge" id="pb1">1</div>
+        <div class="phase-title">Gemini — upload images + article, get hooks</div>
+        <span class="tool-pill tg">Gem 2</span>
       </div>
+      <div class="steps">
 
-      <div class="step">
-        <div class="chk" onclick="tick(this)"></div>
-        <div class="step-body">
-          <div class="step-label">Upload all 4 scene images + paste the story prompt</div>
-          <div class="step-detail">Attach all images in the same message as the prompt text using the Section 5 format:<br>
-          <code>&lt;article-url&gt;</code> <code>&lt;article-text&gt;</code> <code>&lt;breaking&gt;</code> <code>&lt;images&gt;</code><br>
-          Filenames in <code>&lt;images&gt;</code> must exactly match your uploaded file names.</div>
-          <div class="tip"><strong>All images at once:</strong> The Gem analyzes tone and subject position for every scene in one pass. This drives layout selection for all 3 body scenes simultaneously.</div>
+        <div class="step">
+          <div class="chk" onclick="tick(this)"></div>
+          <div class="step-body">
+            <div class="step-label">Open Story Producer Gem — start a new chat</div>
+            <div class="step-detail">Start a fresh chat for each story. Do not reuse a previous story session — prior image analysis will interfere.</div>
+          </div>
         </div>
-      </div>
 
-      <div class="step">
-        <div class="chk" onclick="tick(this)"></div>
-        <div class="step-body">
-          <div class="step-label">Review the 3 hook options — reply with your choice</div>
-          <div class="step-detail">Reply with just the number: <code>2</code> or <code>Hook 2</code>. The Gem then runs image analysis and story type assessment before generating the full output.</div>
+        <div class="step">
+          <div class="chk" onclick="tick(this)"></div>
+          <div class="step-body">
+            <div class="step-label">Upload all 4 scene images + paste the story prompt</div>
+            <div class="step-detail">Attach all images in the same message as the prompt text using the Section 5 format:<br>
+            <code>&lt;article-url&gt;</code> <code>&lt;article-text&gt;</code> <code>&lt;breaking&gt;</code> <code>&lt;images&gt;</code><br>
+            Upload images in the intended scene order (Scene 1 first). The Gem assigns layouts based on position, not filename.</div>
+          </div>
         </div>
-      </div>
 
+        <div class="step">
+          <div class="chk" onclick="tick(this)"></div>
+          <div class="step-body">
+            <div class="step-label">Select one hook from the three options</div>
+            <div class="step-detail">The Gem returns 3 hook options with rationale. Reply with just the number: <code>1</code>, <code>2</code>, or <code>3</code>. The Gem then produces the full instruction block.</div>
+          </div>
+        </div>
+
+      </div>
     </div>
-  </div>
 
-  <hr class="divider">
+    <hr class="mm-divider">
 
-  <!-- PHASE 2 -->
-  <div class="phase" id="ph2">
-    <div class="phase-head">
-      <div class="phase-badge" id="pb2">2</div>
-      <div class="phase-title">Gemini — review summary + treatment, approve or override</div>
-      <span class="tool-pill tg">Gem 2</span>
+    <!-- PHASE 2 -->
+    <div class="phase" id="ph2">
+      <div class="phase-head">
+        <div class="phase-badge" id="pb2">2</div>
+        <div class="phase-title">Gemini — review summary + treatment, approve or override</div>
+        <span class="tool-pill tg">Gem 2</span>
+      </div>
+      <div class="steps">
+
+        <div class="step">
+          <div class="chk" onclick="tick(this)"></div>
+          <div class="step-body">
+            <div class="step-label">Read the Editorial + Production Summary table</div>
+            <div class="step-detail">Check: tone and subject position read correctly for each image · layout name assigned makes sense · music mood and rationale fit the story. This is your only checkpoint before production.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="chk" onclick="tick(this)"></div>
+          <div class="step-body">
+            <div class="step-label">Override any layout or music assignment if needed</div>
+            <div class="step-detail">Reply before copying the instruction block:<br>
+            <code>Change scene 3 to Body 1 - white txt top</code><br>
+            <code>Change music to Mood A</code><br>
+            The Gem regenerates the instruction block with the correction.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="chk" onclick="tick(this)"></div>
+          <div class="step-body">
+            <div class="step-label">Read the treatment — request narration edits if needed</div>
+            <div class="step-detail">Check narration for accuracy and attribution. Request changes in the same chat session. The Gem regenerates the instruction block with corrected narration. Once you copy the block, treat narration as final.</div>
+          </div>
+        </div>
+
+      </div>
     </div>
-    <div class="steps">
 
-      <div class="step">
-        <div class="chk" onclick="tick(this)"></div>
-        <div class="step-body">
-          <div class="step-label">Read the Editorial + Production Summary table</div>
-          <div class="step-detail">Check: tone and subject position read correctly for each image · layout name assigned makes sense · music mood and rationale fit the story. This is your only checkpoint before production.</div>
-        </div>
+    <hr class="mm-divider">
+
+    <!-- PHASE 3 -->
+    <div class="phase" id="ph3">
+      <div class="phase-head">
+        <div class="phase-badge" id="pb3">3</div>
+        <div class="phase-title">Descript — duplicate template + import images</div>
+        <span class="tool-pill td">Descript</span>
       </div>
+      <div class="steps">
 
-      <div class="step">
-        <div class="chk" onclick="tick(this)"></div>
-        <div class="step-body">
-          <div class="step-label">Override any layout or music assignment if needed</div>
-          <div class="step-detail">Reply before copying the instruction block:<br>
-          <code>Change scene 3 to Body 1 - white txt top</code><br>
-          <code>Change music to Mood A</code><br>
-          The Gem regenerates the instruction block with the correction.</div>
+        <div class="step">
+          <div class="chk" onclick="tick(this)"></div>
+          <div class="step-body">
+            <div class="step-label">Duplicate the TEMPLATE project — rename for this story</div>
+            <div class="step-detail">Right-click <code>Descript Reel TEMPLATE v4</code> → Duplicate. Rename immediately, e.g. <code>Date | Story name</code>. Open the duplicate. Confirm 5 scenes are present: Hook Card / Body A / Body B / Body C / CTA Card.</div>
+          </div>
         </div>
-      </div>
 
-      <div class="step">
-        <div class="chk" onclick="tick(this)"></div>
-        <div class="step-body">
-          <div class="step-label">Read the treatment — request narration edits if needed</div>
-          <div class="step-detail">Check narration for accuracy and attribution. Request changes in the same chat session. The Gem regenerates the instruction block with corrected narration. Once you copy the block, treat narration as final.</div>
+        <div class="step">
+          <div class="chk" onclick="tick(this)"></div>
+          <div class="step-body">
+            <div class="step-label">Import all 4 story images into the media bin</div>
+            <div class="step-detail">Drag images into the Descript media panel — not the timeline. Confirm filenames match exactly what appears in the Gem's instruction block. Rename files before importing if needed.</div>
+            <div class="tip"><strong>Import before running Underlord:</strong> The instruction block references images by filename. If they're not in the media bin when Underlord runs, it can't place them.</div>
+          </div>
         </div>
-      </div>
 
+      </div>
     </div>
-  </div>
 
-  <hr class="divider">
+    <hr class="mm-divider">
 
-  <!-- PHASE 3 -->
-  <div class="phase" id="ph3">
-    <div class="phase-head">
-      <div class="phase-badge" id="pb3">3</div>
-      <div class="phase-title">Descript — duplicate template + import images</div>
-      <span class="tool-pill td">Descript</span>
+    <!-- PHASE 4 -->
+    <div class="phase" id="ph4">
+      <div class="phase-head">
+        <div class="phase-badge" id="pb4">4</div>
+        <div class="phase-title">Descript — paste single instruction block into Underlord <span class="one-paste-badge">One paste</span></div>
+        <span class="tool-pill td">Descript</span>
+      </div>
+      <div class="steps">
+
+        <div class="step">
+          <div class="chk" onclick="tick(this)"></div>
+          <div class="step-body">
+            <div class="step-label">Copy the Descript Underlord Instruction Block from Gem 2</div>
+            <div class="step-detail">Copy everything from "This project contains exactly 5 scenes…" through to the engagement question line. Do not include section headers or dashed rule lines above and below the block.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="chk" onclick="tick(this)"></div>
+          <div class="step-body">
+            <div class="step-label">Open Underlord — paste — hit Enter</div>
+            <div class="step-detail">One paste. One run. Underlord executes in sequence:<br>
+            1. Confirms 5-scene structure (does not create or delete scenes)<br>
+            2. Sets Studio Sound 75%, filler removal, Dolores 0.95x<br>
+            3. Adds music track from library at 20% volume with fades<br>
+            4. Applies named layout to each of scenes 1–5<br>
+            5. Places images into scene placeholders at Fill scaling<br>
+            6. Applies Ken Burns per scene<br>
+            7. Sets headline + subhead text per scene<br>
+            8. Assigns narration per scene</div>
+            <div class="tip"><strong>If Underlord asks which music track:</strong> Pick the first result matching the mood — quiet and reflective for Mood A, forward-moving and alert for Mood B. Not dramatic.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="chk" onclick="tick(this)"></div>
+          <div class="step-body">
+            <div class="step-label">Verify Underlord completed without creating new scenes</div>
+            <div class="step-detail">Check the scene rail. You should still see exactly 5 scenes in the original order. If Underlord created a 6th scene or reordered existing ones, use Undo (Cmd+Z) and bring the issue to Gem 1 Workflow C before re-running.</div>
+          </div>
+        </div>
+
+      </div>
     </div>
-    <div class="steps">
 
-      <div class="step">
-        <div class="chk" onclick="tick(this)"></div>
-        <div class="step-body">
-          <div class="step-label">Duplicate the TEMPLATE project — rename for this story</div>
-          <div class="step-detail">Right-click <code>Descript Reel TEMPLATE v4</code> → Duplicate. Rename immediately, e.g. <code>Date | Story name</code>. Open the duplicate. Confirm 5 scenes are present: Hook Card / Body A / Body B / Body C / CTA Card.</div>
-        </div>
+    <hr class="mm-divider">
+
+    <!-- PHASE 5 -->
+    <div class="phase" id="ph5">
+      <div class="phase-head">
+        <div class="phase-badge" id="pb5">5</div>
+        <div class="phase-title">Descript — review, refine, export</div>
+        <span class="tool-pill ty">You</span>
+        <span class="tool-pill td" style="margin-left:4px;">Descript</span>
       </div>
+      <div class="steps">
 
-      <div class="step">
-        <div class="chk" onclick="tick(this)"></div>
-        <div class="step-body">
-          <div class="step-label">Import all 4 story images into the media bin</div>
-          <div class="step-detail">Drag images into the Descript media panel — not the timeline. Confirm filenames match exactly what appears in the Gem's instruction block. Rename files before importing if needed.</div>
-          <div class="tip"><strong>Import before running Underlord:</strong> The instruction block references images by filename. If they're not in the media bin when Underlord runs, it can't place them.</div>
+        <div class="step">
+          <div class="chk" onclick="tick(this)"></div>
+          <div class="step-body">
+            <div class="step-label">Play the full 5-scene preview end to end</div>
+            <div class="step-detail">Check: P-logo lower-right on all scenes · correct rectangle (dark or light) behind text on body scenes · captions on scenes 2–4 only · Hook Card opens correctly · CTA Card closes correctly · music audible but clearly under the voice · Ken Burns motion appropriate for each image.</div>
+          </div>
         </div>
-      </div>
 
+        <div class="step">
+          <div class="chk" onclick="tick(this)"></div>
+          <div class="step-body">
+            <div class="step-label">Make manual refinements if needed</div>
+            <div class="step-detail">Small fixes via timeline: clip duration, Ken Burns start frame, caption timing. Structural fixes via focused Underlord follow-up: one instruction at a time. Example: <code>Trim the pause at the start of scene 3 narration.</code> Do not re-run the full instruction block for small fixes.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="chk" onclick="tick(this)"></div>
+          <div class="step-body">
+            <div class="step-label">Export using the Reel 1080p preset</div>
+            <div class="step-detail"><code>File → Export → Video → Reel 1080p</code><br>
+            MP4, H.264, 1080×1920, maximum bitrate.<br>
+            File naming: <code>[slug]-[YYYYMMDD].mp4</code></div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="chk" onclick="tick(this)"></div>
+          <div class="step-body">
+            <div class="step-label">Log any issues before the next story</div>
+            <div class="step-detail">One sentence per issue. Layout wrong → Gem 1 Workflow C. Narration off → note for Gem 2 next run. Music search term produced wrong result → note the term and what to try instead. These observations drive system improvement.</div>
+          </div>
+        </div>
+
+      </div>
     </div>
-  </div>
 
-  <hr class="divider">
+    <button class="mm-btn" onclick="resetAll()">Reset all checkboxes</button>
 
-  <!-- PHASE 4 -->
-  <div class="phase" id="ph4">
-    <div class="phase-head">
-      <div class="phase-badge" id="pb4">4</div>
-      <div class="phase-title">Descript — paste single instruction block into Underlord <span class="single-block-badge">One paste</span></div>
-      <span class="tool-pill td">Descript</span>
-    </div>
-    <div class="steps">
-
-      <div class="step">
-        <div class="chk" onclick="tick(this)"></div>
-        <div class="step-body">
-          <div class="step-label">Copy the Descript Underlord Instruction Block from Gem 2</div>
-          <div class="step-detail">Copy everything from "This project contains exactly 5 scenes…" through to the engagement question line. Do not include section headers or dashed rule lines above and below the block.</div>
-        </div>
-      </div>
-
-      <div class="step">
-        <div class="chk" onclick="tick(this)"></div>
-        <div class="step-body">
-          <div class="step-label">Open Underlord — paste — hit Enter</div>
-          <div class="step-detail">One paste. One run. Underlord executes in sequence:<br>
-          1. Confirms 5-scene structure (does not create or delete scenes)<br>
-          2. Sets Studio Sound 75%, filler removal, Dolores 0.95x<br>
-          3. Adds music track from library at 20% volume with fades<br>
-          4. Applies named layout to each of scenes 1–5<br>
-          5. Places images into scene placeholders at Fill scaling<br>
-          6. Applies Ken Burns per scene<br>
-          7. Sets headline + subhead text per scene<br>
-          8. Assigns narration per scene</div>
-          <div class="tip"><strong>If Underlord asks which music track:</strong> Pick the first result matching the mood — quiet and reflective for Mood A, forward-moving and alert for Mood B. Not dramatic.</div>
-        </div>
-      </div>
-
-      <div class="step">
-        <div class="chk" onclick="tick(this)"></div>
-        <div class="step-body">
-          <div class="step-label">Verify Underlord completed without creating new scenes</div>
-          <div class="step-detail">Check the scene rail. You should still see exactly 5 scenes in the original order. If Underlord created a 6th scene or reordered existing ones, use Undo (Cmd+Z) and bring the issue to Gem 1 Workflow C before re-running.</div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <hr class="divider">
-
-  <!-- PHASE 5 -->
-  <div class="phase" id="ph5">
-    <div class="phase-head">
-      <div class="phase-badge" id="pb5">5</div>
-      <div class="phase-title">Descript — review, refine, export</div>
-      <span class="tool-pill ty">You</span>
-      <span class="tool-pill td" style="margin-left:4px;">Descript</span>
-    </div>
-    <div class="steps">
-
-      <div class="step">
-        <div class="chk" onclick="tick(this)"></div>
-        <div class="step-body">
-          <div class="step-label">Play the full 5-scene preview end to end</div>
-          <div class="step-detail">Check: P-logo lower-right on all scenes · correct rectangle (dark or light) behind text on body scenes · captions on scenes 2–4 only · Hook Card opens correctly · CTA Card closes correctly · music audible but clearly under the voice · Ken Burns motion appropriate for each image.</div>
-        </div>
-      </div>
-
-      <div class="step">
-        <div class="chk" onclick="tick(this)"></div>
-        <div class="step-body">
-          <div class="step-label">Make manual refinements if needed</div>
-          <div class="step-detail">Small fixes via timeline: clip duration, Ken Burns start frame, caption timing. Structural fixes via focused Underlord follow-up: one instruction at a time. Example: <code>Trim the pause at the start of scene 3 narration.</code> Do not re-run the full instruction block for small fixes.</div>
-        </div>
-      </div>
-
-      <div class="step">
-        <div class="chk" onclick="tick(this)"></div>
-        <div class="step-body">
-          <div class="step-label">Export using the Reel 1080p preset</div>
-          <div class="step-detail"><code>File → Export → Video → Reel 1080p</code><br>
-          MP4, H.264, 1080×1920, maximum bitrate.<br>
-          File naming: <code>[slug]-[YYYYMMDD].mp4</code></div>
-        </div>
-      </div>
-
-      <div class="step">
-        <div class="chk" onclick="tick(this)"></div>
-        <div class="step-body">
-          <div class="step-label">Log any issues before the next story</div>
-          <div class="step-detail">One sentence per issue. Layout wrong → Gem 1 Workflow C. Narration off → note for Gem 2 next run. Music search term produced wrong result → note the term and what to try instead. These observations drive system improvement.</div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <button class="reset-btn" onclick="resetAll()">Reset all checkboxes</button>
-
+  </main>
 </div>
+
+<!-- ── Footer ── -->
+<footer class="mm-footer">
+  © 2026 <a href="https://lyndonwong.com">Lyndon Wong</a>. 
+  Powered by <a href="https://jekyllrb.com">Jekyll</a> &amp; 
+  <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/">Minimal Mistakes</a>.
+</footer>
 
 <script>
 function tick(el) {
