@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Reel Production Workflow</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #f5f4f0;
+    color: #1a1a1a;
+    padding: 32px 16px 64px;
+    min-height: 100vh;
+  }
+  .container { max-width: 680px; margin: 0 auto; }
+
+  .masthead {
+    background: #0a0a0a;
+    border-radius: 12px;
+    padding: 28px 28px 22px;
+    margin-bottom: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .masthead::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #B31C1C 0%, #e05555 50%, #B31C1C 100%);
+  }
+  .masthead-eyebrow {
+    font-size: 10px; font-weight: 600;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: #B31C1C; margin-bottom: 8px;
+  }
+  .masthead-title {
+    font-size: 26px; font-weight: 800;
+    color: #fff; line-height: 1.1; margin-bottom: 6px;
+  }
+  .masthead-sub { font-size: 13px; color: #888; margin-bottom: 18px; }
+
+  .change-banner {
+    background: #1a1a1a;
+    border: 0.5px solid #333;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin-bottom: 18px;
+    font-size: 11px; color: #aaa; line-height: 1.6;
+  }
+  .change-banner strong { color: #B31C1C; }
+
+  .prog-track {
+    background: #222; border-radius: 20px;
+    height: 5px; overflow: hidden; margin-bottom: 5px;
+  }
+  .prog-fill {
+    height: 100%; background: #B31C1C;
+    border-radius: 20px; width: 0%;
+    transition: width 0.3s ease;
+  }
+  .prog-label { font-size: 11px; color: #666; text-align: right; }
+
+  .phase { margin-bottom: 20px; }
+  .phase-head {
+    display: flex; align-items: center; gap: 10px;
+    padding: 11px 15px;
+    background: #fff;
+    border-radius: 8px;
+    border: 0.5px solid #ddd;
+    margin-bottom: 10px;
+  }
+  .phase-badge {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: #B31C1C; color: #fff;
+    font-size: 11px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: background 0.2s;
+  }
+  .phase-badge.complete { background: #2d8a52; }
+  .phase-title { font-size: 13px; font-weight: 600; color: #1a1a1a; flex: 1; }
+
+  .tool-pill {
+    font-size: 10px; font-weight: 600;
+    padding: 2px 8px; border-radius: 20px;
+    text-transform: uppercase; letter-spacing: 0.07em;
+    white-space: nowrap; flex-shrink: 0;
+  }
+  .tg { border: 0.5px solid rgba(66,133,244,0.4); color: #4285F4; background: rgba(66,133,244,0.07); }
+  .td { border: 0.5px solid rgba(102,51,153,0.4); color: #663399; background: rgba(102,51,153,0.07); }
+  .ty { border: 0.5px solid rgba(45,138,82,0.4); color: #2d8a52; background: rgba(45,138,82,0.07); }
+
+  .steps { padding-left: 2px; }
+  .step { display: flex; gap: 12px; margin-bottom: 10px; align-items: flex-start; }
+  .chk {
+    width: 19px; height: 19px;
+    border: 1.5px solid #ccc;
+    border-radius: 4px; flex-shrink: 0; margin-top: 1px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.12s, border-color 0.12s;
+    background: #fff;
+  }
+  .chk:hover { border-color: #B31C1C; }
+  .chk.done { background: #B31C1C; border-color: #B31C1C; }
+  .chk.done::after {
+    content: '';
+    width: 10px; height: 6px;
+    border-left: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+    transform: rotate(-45deg) translateY(-1px);
+    display: block;
+  }
+  .step-body { flex: 1; }
+  .step-label {
+    font-size: 13px; font-weight: 600;
+    color: #1a1a1a; margin-bottom: 3px; line-height: 1.4;
+  }
+  .step-detail { font-size: 12px; color: #555; line-height: 1.65; }
+  .step-detail code {
+    font-family: "SF Mono", "Fira Code", monospace; font-size: 11px;
+    background: #f0eeeb; border: 0.5px solid #ddd;
+    border-radius: 3px; padding: 1px 5px; color: #1a1a1a;
+  }
+
+  .tip {
+    background: #fdf6f6;
+    border-left: 3px solid #B31C1C;
+    border-radius: 6px;
+    padding: 9px 13px;
+    font-size: 12px; color: #555;
+    line-height: 1.6; margin-top: 7px;
+  }
+  .tip strong { color: #1a1a1a; font-weight: 600; }
+
+  .single-block-badge {
+    display: inline-block;
+    font-size: 10px; font-weight: 700;
+    padding: 3px 9px; border-radius: 20px;
+    background: #B31C1C; color: #fff;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    margin-left: 6px; vertical-align: middle;
+  }
+
+  .divider { border: none; border-top: 0.5px solid #ddd; margin: 18px 0; }
+
+  .reset-btn {
+    display: block; margin: 28px auto 0;
+    padding: 9px 24px; border-radius: 6px;
+    border: 1.5px solid #B31C1C;
+    background: transparent; color: #B31C1C;
+    font-size: 12px; font-weight: 600;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    cursor: pointer; transition: background 0.15s, color 0.15s;
+  }
+  .reset-btn:hover { background: #B31C1C; color: #fff; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="masthead">
+    <div class="masthead-eyebrow">Story Producer v7.6</div>
+    <div class="masthead-title">AI Reel Production Workflow</div>
+    <div class="masthead-sub">Gemini Gem → Descript · 5-scene Instagram Reel · Single instruction block</div>
+
+    <div class="change-banner">
+      <strong>v7.6 changes:</strong> Block 1 / Block 2 eliminated — single paste into Underlord. Color grade removed. Caption instructions removed (layout-handled). Music specified entirely in single block. Scene count explicitly 5. Fixed ALL CAPS casing behavior.
+    </div>
+
+    <div class="prog-track"><div class="prog-fill" id="prog"></div></div>
+    <div class="prog-label"><span id="dn">0</span> of <span id="tot">0</span> steps complete</div>
+  </div>
+
+  <!-- PHASE 1 -->
+  <div class="phase" id="ph1">
+    <div class="phase-head">
+      <div class="phase-badge" id="pb1">1</div>
+      <div class="phase-title">Gemini — upload images + article, get hooks</div>
+      <span class="tool-pill tg">Gem 2</span>
+    </div>
+    <div class="steps">
+
+      <div class="step">
+        <div class="chk" onclick="tick(this)"></div>
+        <div class="step-body">
+          <div class="step-label">Open Story Producer Gem — start a new chat</div>
+          <div class="step-detail">Start a fresh chat for each story. Do not reuse a previous story session — prior image analysis will interfere.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="chk" onclick="tick(this)"></div>
+        <div class="step-body">
+          <div class="step-label">Upload all 4 scene images + paste the story prompt</div>
+          <div class="step-detail">Attach all images in the same message as the prompt text using the Section 5 format:<br>
+          <code>&lt;article-url&gt;</code> <code>&lt;article-text&gt;</code> <code>&lt;breaking&gt;</code> <code>&lt;images&gt;</code><br>
+          Filenames in <code>&lt;images&gt;</code> must exactly match your uploaded file names.</div>
+          <div class="tip"><strong>All images at once:</strong> The Gem analyzes tone and subject position for every scene in one pass. This drives layout selection for all 3 body scenes simultaneously.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="chk" onclick="tick(this)"></div>
+        <div class="step-body">
+          <div class="step-label">Review the 3 hook options — reply with your choice</div>
+          <div class="step-detail">Reply with just the number: <code>2</code> or <code>Hook 2</code>. The Gem then runs image analysis and story type assessment before generating the full output.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- PHASE 2 -->
+  <div class="phase" id="ph2">
+    <div class="phase-head">
+      <div class="phase-badge" id="pb2">2</div>
+      <div class="phase-title">Gemini — review summary + treatment, approve or override</div>
+      <span class="tool-pill tg">Gem 2</span>
+    </div>
+    <div class="steps">
+
+      <div class="step">
+        <div class="chk" onclick="tick(this)"></div>
+        <div class="step-body">
+          <div class="step-label">Read the Editorial + Production Summary table</div>
+          <div class="step-detail">Check: tone and subject position read correctly for each image · layout name assigned makes sense · music mood and rationale fit the story. This is your only checkpoint before production.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="chk" onclick="tick(this)"></div>
+        <div class="step-body">
+          <div class="step-label">Override any layout or music assignment if needed</div>
+          <div class="step-detail">Reply before copying the instruction block:<br>
+          <code>Change scene 3 to Body 1 - white txt top</code><br>
+          <code>Change music to Mood A</code><br>
+          The Gem regenerates the instruction block with the correction.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="chk" onclick="tick(this)"></div>
+        <div class="step-body">
+          <div class="step-label">Read the treatment — request narration edits if needed</div>
+          <div class="step-detail">Check narration for accuracy and attribution. Request changes in the same chat session. The Gem regenerates the instruction block with corrected narration. Once you copy the block, treat narration as final.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- PHASE 3 -->
+  <div class="phase" id="ph3">
+    <div class="phase-head">
+      <div class="phase-badge" id="pb3">3</div>
+      <div class="phase-title">Descript — duplicate template + import images</div>
+      <span class="tool-pill td">Descript</span>
+    </div>
+    <div class="steps">
+
+      <div class="step">
+        <div class="chk" onclick="tick(this)"></div>
+        <div class="step-body">
+          <div class="step-label">Duplicate the TEMPLATE project — rename for this story</div>
+          <div class="step-detail">Right-click <code>Descript Reel TEMPLATE v4</code> → Duplicate. Rename immediately, e.g. <code>Date | Story name</code>. Open the duplicate. Confirm 5 scenes are present: Hook Card / Body A / Body B / Body C / CTA Card.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="chk" onclick="tick(this)"></div>
+        <div class="step-body">
+          <div class="step-label">Import all 4 story images into the media bin</div>
+          <div class="step-detail">Drag images into the Descript media panel — not the timeline. Confirm filenames match exactly what appears in the Gem's instruction block. Rename files before importing if needed.</div>
+          <div class="tip"><strong>Import before running Underlord:</strong> The instruction block references images by filename. If they're not in the media bin when Underlord runs, it can't place them.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- PHASE 4 -->
+  <div class="phase" id="ph4">
+    <div class="phase-head">
+      <div class="phase-badge" id="pb4">4</div>
+      <div class="phase-title">Descript — paste single instruction block into Underlord <span class="single-block-badge">One paste</span></div>
+      <span class="tool-pill td">Descript</span>
+    </div>
+    <div class="steps">
+
+      <div class="step">
+        <div class="chk" onclick="tick(this)"></div>
+        <div class="step-body">
+          <div class="step-label">Copy the Descript Underlord Instruction Block from Gem 2</div>
+          <div class="step-detail">Copy everything from "This project contains exactly 5 scenes…" through to the engagement question line. Do not include section headers or dashed rule lines above and below the block.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="chk" onclick="tick(this)"></div>
+        <div class="step-body">
+          <div class="step-label">Open Underlord — paste — hit Enter</div>
+          <div class="step-detail">One paste. One run. Underlord executes in sequence:<br>
+          1. Confirms 5-scene structure (does not create or delete scenes)<br>
+          2. Sets Studio Sound 75%, filler removal, Dolores 0.95x<br>
+          3. Adds music track from library at 20% volume with fades<br>
+          4. Applies named layout to each of scenes 1–5<br>
+          5. Places images into scene placeholders at Fill scaling<br>
+          6. Applies Ken Burns per scene<br>
+          7. Sets headline + subhead text per scene<br>
+          8. Assigns narration per scene</div>
+          <div class="tip"><strong>If Underlord asks which music track:</strong> Pick the first result matching the mood — quiet and reflective for Mood A, forward-moving and alert for Mood B. Not dramatic.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="chk" onclick="tick(this)"></div>
+        <div class="step-body">
+          <div class="step-label">Verify Underlord completed without creating new scenes</div>
+          <div class="step-detail">Check the scene rail. You should still see exactly 5 scenes in the original order. If Underlord created a 6th scene or reordered existing ones, use Undo (Cmd+Z) and bring the issue to Gem 1 Workflow C before re-running.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- PHASE 5 -->
+  <div class="phase" id="ph5">
+    <div class="phase-head">
+      <div class="phase-badge" id="pb5">5</div>
+      <div class="phase-title">Descript — review, refine, export</div>
+      <span class="tool-pill ty">You</span>
+      <span class="tool-pill td" style="margin-left:4px;">Descript</span>
+    </div>
+    <div class="steps">
+
+      <div class="step">
+        <div class="chk" onclick="tick(this)"></div>
+        <div class="step-body">
+          <div class="step-label">Play the full 5-scene preview end to end</div>
+          <div class="step-detail">Check: P-logo lower-right on all scenes · correct rectangle (dark or light) behind text on body scenes · captions on scenes 2–4 only · Hook Card opens correctly · CTA Card closes correctly · music audible but clearly under the voice · Ken Burns motion appropriate for each image.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="chk" onclick="tick(this)"></div>
+        <div class="step-body">
+          <div class="step-label">Make manual refinements if needed</div>
+          <div class="step-detail">Small fixes via timeline: clip duration, Ken Burns start frame, caption timing. Structural fixes via focused Underlord follow-up: one instruction at a time. Example: <code>Trim the pause at the start of scene 3 narration.</code> Do not re-run the full instruction block for small fixes.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="chk" onclick="tick(this)"></div>
+        <div class="step-body">
+          <div class="step-label">Export using the Reel 1080p preset</div>
+          <div class="step-detail"><code>File → Export → Video → Reel 1080p</code><br>
+          MP4, H.264, 1080×1920, maximum bitrate.<br>
+          File naming: <code>[slug]-[YYYYMMDD].mp4</code></div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="chk" onclick="tick(this)"></div>
+        <div class="step-body">
+          <div class="step-label">Log any issues before the next story</div>
+          <div class="step-detail">One sentence per issue. Layout wrong → Gem 1 Workflow C. Narration off → note for Gem 2 next run. Music search term produced wrong result → note the term and what to try instead. These observations drive system improvement.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <button class="reset-btn" onclick="resetAll()">Reset all checkboxes</button>
+
+</div>
+
+<script>
+function tick(el) {
+  el.classList.toggle('done');
+  update();
+}
+function update() {
+  var all = document.querySelectorAll('.chk');
+  var done = document.querySelectorAll('.chk.done');
+  document.getElementById('tot').textContent = all.length;
+  document.getElementById('dn').textContent = done.length;
+  document.getElementById('prog').style.width = Math.round(done.length / all.length * 100) + '%';
+  [1,2,3,4,5].forEach(function(n) {
+    var ph = document.getElementById('ph' + n);
+    var pb = document.getElementById('pb' + n);
+    if (!ph || !pb) return;
+    var c = ph.querySelectorAll('.chk');
+    var d = ph.querySelectorAll('.chk.done');
+    if (c.length && d.length === c.length) pb.classList.add('complete');
+    else pb.classList.remove('complete');
+  });
+}
+function resetAll() {
+  document.querySelectorAll('.chk.done').forEach(function(el) { el.classList.remove('done'); });
+  update();
+}
+update();
+</script>
+</body>
+</html>
